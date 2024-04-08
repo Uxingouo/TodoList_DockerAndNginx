@@ -8,42 +8,90 @@ uuidv4();
 export const TodoWrapperLocalStorage = () => {
     const [todos, setTodos] = useState([])
 
-    useEffect(() => { try{
-        const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
-        setTodos(savedTodos);
+    useEffect(() => {
+        const fetchTodos = async () => {
+          try {
+            const response = await fetch(`http://localhost:5001/todos`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
+            const savedTodos = await response.json();
+            setTodos(savedTodos);
+          } catch (err) {
+            console.error('Error fetching todos from server:', err);
+          }
+        };
+      
+        fetchTodos();
+      }, []);
+    
+    const addTodo = async (todo) => {
+        try {
+            const response = await fetch('http://localhost:5001/todos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ task: todo }),
+            });
+            const newTodo = await response.json();
+            console.log(newTodo)
+            
+            setTodos([...todos, newTodo]);
+        } catch (err) {
+            console.error('Failed to add todo', err);
+        }
     }
-    catch(err){
-        console.log('error', err);
+
+
+    const toggleComplete = async (id) => {
+        const todoToUpdate = todos.find(todo => todo.id === id);
+        try {
+            await fetch(`http://localhost:5001/todos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...todoToUpdate, completed: !todoToUpdate.completed }),
+            });
+            // const updatedTodo = await response.json();
+            setTodos(todos.map(todo => todo.id === id ? todoToUpdate : todo));
+        } catch (err) {
+            console.error('Failed to update todo', err);
+        }
     }
-    }, []);
 
-    const addTodo = todo => {
-        const newTodos = [...todos, {id: uuidv4(), task: todo, completed: false, isEditing: false}];
-        setTodos(newTodos);
-        localStorage.setItem('todos', JSON.stringify(newTodos));
-    }
-
-
-    const toggleComplete = id => {
-        const newTodos = todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo);
-        setTodos(newTodos);
-        localStorage.setItem('todos', JSON.stringify(newTodos));
-    }
-
-    const deleteTodo = id => {
-        const newTodos = todos.filter(todo => todo.id !== id);
-        setTodos(newTodos);
-        localStorage.setItem('todos', JSON.stringify(newTodos));
+    const deleteTodo = async (id) => {
+        try {
+            await fetch(`http://localhost:5001/todos/${id}`, {
+                method: 'DELETE',
+            });
+            setTodos(todos.filter(todo => todo.id !== id));
+        } catch (err) {
+            console.error('Failed to delete todo', err);
+        }
     }
 
     const editTodo = id => {
         setTodos(todos.map(todo => todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo))
     }
 
-    const editTask = (task, id) => {
-        const newTodos = todos.map(todo => todo.id === id ? {...todo, task, isEditing: !todo.isEditing} : todo);
-        setTodos(newTodos);
-        localStorage.setItem('todos', JSON.stringify(newTodos));
+    const editTask = async (task, id) => {
+        try {
+            const response = await fetch(`http://localhost:5001/todos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ task }),
+            });
+            // const updatedTodo = await response.json();
+            setTodos(todos.map(todo => todo.id === id ? { ...todo, task, isEditing: false } : todo));
+        } catch (err) {
+            console.error('Failed to edit todo', err);
+        }
     }
   return (
     <div className='TodoWrapper'>

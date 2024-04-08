@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+### Main database ###########################################
+  postgres:
+    container_name: 'todolist'
+    image: postgres:16.2-alpine3.18
+    platform: linux/amd64
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+### postgres-client ################################################
+  postgres-client:
+    container_name: 'todolist-client'
+    image: dpage/pgadmin4
+    platform: linux/amd64
+    environment:
+      PGADMIN_DEFAULT_EMAIL: asd95374118@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: abcd
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+volumes:
+    db-data:
+    pgadmin-data:
