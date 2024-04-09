@@ -1,23 +1,19 @@
-name: Manual Workflow Example
+name: blogPush
 
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Comma-separated tags'
-        required: false
+      message:
+        description: 'The message to echo'  # 輸入的描述
+        required: true                      # 這個輸入是否必須
+        default: 'Hello World!'             # 預設值
+  push:
+    branches: [ main ]
 
 jobs:
-  manual-job:
+  test:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Run a script
-      run: |
-        echo "Log Level: ${{ github.event.inputs.logLevel }}"
-        echo "Tags: ${{ github.event.inputs.tags }}"
+    - uses: actions/checkout@v2
+    - name: Run a one-line code
+      run: echo "${{ github.event.inputs.message }}"
