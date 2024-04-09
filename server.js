@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+const { Octokit } = require("@octokit/core");
 const express = require('express');
 const { Pool } = require('pg');
 const app = express();
@@ -6,7 +9,7 @@ const path = require('path');
 
 const cors = require('cors');
 app.use(cors());
-
+app.use(express.json());
 
 // PostgreSQL 連線設定
 const pool = new Pool({
@@ -17,8 +20,27 @@ const pool = new Pool({
   port: 5432,
 });
 
+const octokit = new Octokit({
+  auth: process.env.AUTH 
+});
 
-app.use(express.json());
+app.post('/trigger-workflow', async (req, res) => {
+  const { owner, repo, workflow_id, ref, inputs } = req.body; 
+  try {
+    await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+      owner: owner,
+      repo: repo,
+      workflow_id: workflow_id,
+      ref: ref,
+      inputs: inputs,
+    });
+    res.status(200).send('Workflow triggered successfully');
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Failed to trigger the workflow');
+  }
+});
+
 
 app.get('/todos', async (req, res) => {
   try {
