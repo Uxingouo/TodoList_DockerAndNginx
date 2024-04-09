@@ -1,14 +1,23 @@
-name: blogPush
+name: Manual Workflow Example
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Comma-separated tags'
+        required: false
 
 jobs:
-  test:
+  manual-job:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Run a one-line code 
-      run: echo Hellow word!!!!
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Run a script
+      run: |
+        echo "Log Level: ${{ github.event.inputs.logLevel }}"
+        echo "Tags: ${{ github.event.inputs.tags }}"
