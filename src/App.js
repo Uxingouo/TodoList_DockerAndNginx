@@ -12,7 +12,8 @@ function App() {
       workflow_id: 'blog-push.yaml',
       ref: 'main',
       inputs: {
-        exampleInput: 'Example value',
+        message: 'Example value',
+        title: 'xxx'
       },
     };
 
