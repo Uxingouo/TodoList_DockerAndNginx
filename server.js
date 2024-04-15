@@ -25,12 +25,12 @@ const octokit = new Octokit({
 });
 
 app.post('/trigger-workflow', async (req, res) => {
-  const { owner, repo, ref, inputs } = req.body;
+  const { owner, repo, ref, workflow_file_name, inputs } = req.body;
   try {
     await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches', {
       owner: owner,
       repo: repo,
-      workflow_file_name: 'blogPush.yml',
+      workflow_file_name: workflow_file_name,
       ref: ref,
       inputs: inputs
     });

@@ -10,6 +10,7 @@ function App() {
       owner: 'Uxingouo',
       repo: 'TodoList_DockerAndNginx',
       ref: 'main',
+      workflow_file_name: 'blog-push.yaml',
       inputs: {
         job_id: 'publish_blog_file'
       },
