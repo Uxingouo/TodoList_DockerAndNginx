@@ -5,7 +5,7 @@ on:
     inputs:
       job_id:
         description: 'Job to run'
-        required: false
+        required: true
 
 jobs:
   publish_blog_file:
