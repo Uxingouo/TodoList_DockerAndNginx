@@ -21,25 +21,26 @@ const pool = new Pool({
 });
 
 const octokit = new Octokit({
-  auth: process.env.AUTH 
+  auth: process.env.AUTH
 });
 
 app.post('/trigger-workflow', async (req, res) => {
   const { owner, repo, ref, inputs } = req.body;
   try {
-    await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+    await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches', {
       owner: owner,
       repo: repo,
-      workflow_id: 'blogPush.yml',
+      workflow_file_name: 'blogPush.yml',  // Correct the workflow file name here
       ref: ref,
       inputs: inputs
     });
     res.status(200).send('Workflow triggered successfully');
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Failed to trigger the workflow'+ (err.response ? err.response.data.message : err.message));
+    res.status(500).send('Failed to trigger the workflow: ' + (err.response ? err.response.data.message : err.message));
   }
 });
+
 
 
 app.get('/todos', async (req, res) => {

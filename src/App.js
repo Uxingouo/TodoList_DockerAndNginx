@@ -9,7 +9,7 @@ function App() {
     const jobDetails = {
       owner: 'Uxingouo',
       repo: 'TodoList_DockerAndNginx',
-      ref: 'main',  // Reference to the branch
+      ref: 'main',
       inputs: {
         job_id: 'publish_blog_file'
       },
