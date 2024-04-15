@@ -12,7 +12,8 @@ function App() {
       ref: 'main',
       workflow_file_name: 'blog-push.yaml',
       inputs: {
-        job_id: 'publish_blog_file'
+        job_id: 'publish_blog_file',
+        file_title: 'xxxx'
       },
     };
 

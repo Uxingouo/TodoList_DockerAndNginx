@@ -6,6 +6,9 @@ on:
       job_id:
         description: 'Job to run'
         required: true
+      file_title:
+        description: 'Title of the file to fetch from S3'
+        required: true
 
 jobs:
   publish_blog_file:
@@ -29,7 +32,7 @@ jobs:
 
       - name: Find and Copy corresponding S3 folder
         run: |
-          file_title="xxxx"  # Ensure this is correctly determined or passed as a variable
+          file_title="${{ github.event.inputs.file_title }}"
           aws s3 cp s3://github-action-filepulltest/$file_title ./content/$file_title/ --recursive
 
       - name: Set git identity
