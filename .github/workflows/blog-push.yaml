@@ -70,5 +70,5 @@ jobs:
       - name: Commit and push deletion
         run: |
           git add .
-          git commit -m "Remove content directory for ${{ github.event.inputs.file_title }}"
-          git push origin main
+          git commit -s -m "Remove content directory for ${{ github.event.inputs.file_title }}"
+          git push -u origin main
