@@ -5,12 +5,11 @@ import axios from 'axios';
 
 function App() {
   const handleClick = async () => {
-    const apiUrl = 'http://localhost:5001/trigger-jobs';
+    const apiUrl = 'http://localhost:5001/trigger-workflow';
     const jobDetails = {
       owner: 'Uxingouo',
       repo: 'TodoList_DockerAndNginx',
-      job_id: 'publish_blog_file',
-      ref: 'main',
+      ref: 'main',  // Reference to the branch
       inputs: {
         job_id: 'publish_blog_file'
       },
