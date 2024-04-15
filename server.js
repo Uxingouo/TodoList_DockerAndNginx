@@ -24,15 +24,14 @@ const octokit = new Octokit({
   auth: process.env.AUTH 
 });
 
-app.post('/trigger-workflow', async (req, res) => {
-  const { owner, repo, workflow_id, ref, inputs,  } = req.body; 
+app.post('/trigger-jobs', async (req, res) => {
+  const { owner, repo, job_id } = req.body; 
+  console.log(req.body)
   try {
-    await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+    await octokit.request('POST /repos/{owner}/{repo}/actions/jobs/{job_id}', {
       owner: owner,
       repo: repo,
-      workflow_id: workflow_id,
-      ref: ref,
-      inputs: inputs,
+      job_id: job_id,
     });
     res.status(200).send('Workflow triggered successfully');
   } catch (err) {

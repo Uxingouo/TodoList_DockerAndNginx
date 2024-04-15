@@ -5,20 +5,19 @@ import axios from 'axios';
 
 function App() {
   const handleClick = async () => {
-    const apiUrl = 'http://localhost:5001/trigger-workflow';
-    const workflowDetails = {
+    const apiUrl = 'http://localhost:5001/trigger-jobs';
+    const jobDetails = {
       owner: 'Uxingouo',
       repo: 'TodoList_DockerAndNginx',
-      workflow_id: 'blog-push.yaml',
+      job_id: 'publish_blog_file',
       ref: 'main',
       inputs: {
-        message: 'Example value',
-        title: 'xxx'
+        job_id: 'publish_blog_file'
       },
     };
 
     try {
-      const response = await axios.post(apiUrl, workflowDetails);
+      const response = await axios.post(apiUrl, jobDetails);
       console.log('Workflow triggered successfully:', response.data);
     } catch (error) {
       console.error('Failed to trigger the workflow:', error);
