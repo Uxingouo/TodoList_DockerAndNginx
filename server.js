@@ -54,13 +54,22 @@ app.post('/blogUpdate', async (req, res) => {
 });
 
 app.delete('/deleteFolder', async (req, res) => {
-  const { title } = req.body;
+  const { title , owner, repo, ref, workflow_file_name, inputs } = req.body;
   try {
       const deleteParams = {
           Bucket: process.env.AWS_S3_BUCKET,
           Key: `${title}/index.mdx`
       };
       await s3Client.send(new DeleteObjectCommand(deleteParams));
+
+      await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+        owner: owner,
+        repo: repo,
+        workflow_id: workflow_file_name,
+        ref: ref,
+        inputs: inputs
+    });
+
       res.status(200).send({ message: 'File deleted successfully' });
   } catch (error) {
       console.error('Error deleting file:', error);

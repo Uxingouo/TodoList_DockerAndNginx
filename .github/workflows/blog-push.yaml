@@ -43,5 +43,32 @@ jobs:
       - name: Commit and push changes
         run: |
           git add .
-          git commit -s -m "Add files to content directory"
+          git commit -s -m "Add ${{ github.event.inputs.file_title }} to content directory"
           git push -u origin main
+  
+  delete_blog_folder:
+    if: ${{ github.event.inputs.job_id == 'delete_blog_folder' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Delete directory for content
+        run: |
+          file_title="${{ github.event.inputs.file_title }}"
+          rm -rf content/$file_title
+          if [ -d "content/$file_title" ]; then
+            echo "Directory deletion failed"
+            exit 1
+          fi
+
+      - name: Set git identity
+        run: |-
+          git config user.name "Uxingouo"
+          git config user.email "asd95374118@gmail.com"
+
+      - name: Commit and push deletion
+        run: |
+          git add .
+          git commit -m "Remove content directory for ${{ github.event.inputs.file_title }}"
+          git push origin main
