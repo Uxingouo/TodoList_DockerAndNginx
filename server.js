@@ -1,3 +1,4 @@
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const dotenv = require('dotenv');
 dotenv.config();
 const { Octokit } = require("@octokit/core");
@@ -5,9 +6,8 @@ const express = require('express');
 const { Pool } = require('pg');
 const app = express();
 const port = 5001;
-const path = require('path');
-
 const cors = require('cors');
+
 app.use(cors());
 app.use(express.json());
 
@@ -22,6 +22,35 @@ const pool = new Pool({
 
 const octokit = new Octokit({
   auth: process.env.AUTH
+});
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  },
+});
+
+app.post('/blogUpdate', async (req, res) => {
+  const { title, contents } = req.body;
+
+  try {
+      const payload = {
+          Bucket: process.env.AWS_S3_BUCKET,
+          Key: `${title}/index.mdx`,
+          Body: contents,
+          ContentType: 'text/markdown',
+      };
+
+      const command = new PutObjectCommand(payload);
+      await s3Client.send(command);
+
+      res.status(200).send({ message: 'Blog update successfully' });
+  } catch (error) {
+      console.error('Error updating blog post:', error);
+      res.status(500).send({ error: 'Error updating blog post' });
+  }
 });
 
 app.post('/trigger-workflow', async (req, res) => {
@@ -40,7 +69,6 @@ app.post('/trigger-workflow', async (req, res) => {
     res.status(500).send('Failed to trigger the workflow: ' + (err.response ? err.response.data.message : err.message));
   }
 });
-
 
 
 app.get('/todos', async (req, res) => {
