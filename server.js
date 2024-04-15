@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand ,DeleteObjectCommand} = require('@aws-sdk/client-s3');
 const dotenv = require('dotenv');
 dotenv.config();
 const { Octokit } = require("@octokit/core");
@@ -50,6 +50,21 @@ app.post('/blogUpdate', async (req, res) => {
   } catch (error) {
       console.error('Error updating blog post:', error);
       res.status(500).send({ error: 'Error updating blog post' });
+  }
+});
+
+app.delete('/deleteFolder', async (req, res) => {
+  const { title } = req.body;
+  try {
+      const deleteParams = {
+          Bucket: process.env.AWS_S3_BUCKET,
+          Key: `${title}/index.mdx`
+      };
+      await s3Client.send(new DeleteObjectCommand(deleteParams));
+      res.status(200).send({ message: 'File deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting file:', error);
+      res.status(500).send({ error: 'Error deleting file' });
   }
 });
 
