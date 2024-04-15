@@ -30,7 +30,7 @@ app.post('/trigger-workflow', async (req, res) => {
     await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches', {
       owner: owner,
       repo: repo,
-      workflow_file_name: 'blogPush.yml',  // Correct the workflow file name here
+      workflow_file_name: 'blogPush.yml',
       ref: ref,
       inputs: inputs
     });
